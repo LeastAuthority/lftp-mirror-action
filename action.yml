@@ -1,0 +1,37 @@
+name: 'lftp-mirror'
+description: 'Mirror local and remote files using lftp'
+inputs:
+  remote:
+    description: 'Remote host name or URL (e.g.: sftp://<user>:<pass>@<host><path>)'
+    required: true
+  connect_program:
+    description: 'Program to use for connecting (e.g.: ssh i <key> -o StrictHostKeyChecking=no)'
+    required: false
+  verbose:
+    description: 'Enable verbose logging'
+    required: false
+    default: false
+  reverse:
+    description: 'Enable upload instead of download'
+    required: false
+    default: false
+  delete:
+    description: 'Enable deletion before transfer'
+    required: false
+    default: false
+  local_dir:
+    description: 'Local directory'
+    required: false
+    default: '.'
+  mirror_options:
+    description: 'Extra mirror options (e.g.: --exclude "\.git.*")'
+    required: false
+    default: ''
+  timeout:
+    description: 'Time limit for the completion (seconds)'
+    required: false
+    default: 300
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
