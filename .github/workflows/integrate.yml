@@ -50,6 +50,9 @@ jobs:
         with:
           remote: "sftp://$(whoami)@localhost/$(pwd)/test/remote/"
           local_dir: ./test/local/
+          timeout: 10
+        env:
+          VERBOSE: 2
         continue-on-error: true
 
       - name: Verify
