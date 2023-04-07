@@ -30,9 +30,10 @@ jobs:
           # Generate key pair
           mkdir ~/.ssh && chmod 0700 ~/.ssh
           ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -P ''
-          echo "private_key<<EOF" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "private_key<<$EOF" >> $GITHUB_OUTPUT
           cat ./test_key >> $GITHUB_OUTPUT
-          echo EOF >> $GITHUB_OUTPUT
+          echo $EOF >> $GITHUB_OUTPUT
 
           # Authorizing pub key
           cat ./test_key.pub >> ~/.ssh/authorized_keys
