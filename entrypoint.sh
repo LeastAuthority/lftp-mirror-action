@@ -34,7 +34,6 @@ test -n "${INPUT_DST}"      # Destination directory or URL (e.g.: sftp://<user>:
 : ${INPUT_DELETE:='false'}     # Enable deletion before transfer
 : ${INPUT_VERBOSE:='false'}    # Enable verbose logging
 : ${INPUT_MIRROR_OPTIONS:=''}  # Extra mirror options (e.g.: --exclude "\.git.*")
-: ${INPUT_LOCAL_DIR:='.'}      # Local directory
 : ${INPUT_TIMEOUT:=300}        # Time limit for the completion (seconds)
 : ${GITHUB_STEP_SUMMARY:=/dev/stdout}
 : ${GITHUB_OUTPUT:=/dev/stdout}
@@ -94,7 +93,7 @@ fi
 if [ "${REVERSE}" = true ]; then
   CMD="${CMD} ${INPUT_LOCAL_DIR} ${REMOTE_DIR}; quit;"
 else
-  CMD="${CMD} ${REMOTE_DIR} ${INPUT_LOCAL_DIR}; quit;"
+  CMD="${CMD} ${REMOTE_DIR} ${LOCAL_DIR}; quit;"
 fi
 # Run the command as constructed above
 echo ":rocket: Mirroring by lftp has been started" >> $GITHUB_STEP_SUMMARY
