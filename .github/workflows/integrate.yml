@@ -50,6 +50,9 @@ jobs:
           echo "TEST_USER=$(whoami)" >> $GITHUB_ENV
           echo "TEST_WORSPACE=$(pwd)" >> $GITHUB_ENV
 
+          # Test to be removed
+          ls -lA $(pwd)/test/remote
+
       - name: Call action
         id: call
         uses: ./
