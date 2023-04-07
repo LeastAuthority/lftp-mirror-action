@@ -35,7 +35,8 @@ jobs:
           cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
           chmod 0600 ~/.ssh/authorized_keys
           sudo systemctl status sshd || sudo systemctl start sshd
-          ssh-keyscan -t ed25519 localhost,127.0.0.1 >> ~/.ssh/known_hosts
+          ip addr show
+          ssh-keyscan -t ed25519 localhost,127.0.0.1,172.17.0.1 >> ~/.ssh/known_hosts
 
           # Create test directories
           mkdir -p ./test/{local,remote}
@@ -48,7 +49,7 @@ jobs:
         id: call
         uses: ./
         with:
-          remote: "sftp://$(whoami):dummy@localhost/$(pwd)/test/remote/"
+          remote: "sftp://$(whoami):dummy@172.17.0.1/$(pwd)/test/remote/"
           local_dir: ./test/local/
           reverse: true
           verbose: true
