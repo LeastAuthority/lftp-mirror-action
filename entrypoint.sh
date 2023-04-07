@@ -91,7 +91,7 @@ if [ -n "${INPUT_MIRROR_OPTIONS}" ]; then
 fi
 # Add paths and quit
 if [ "${REVERSE}" = true ]; then
-  CMD="${CMD} ${INPUT_LOCAL_DIR} ${REMOTE_DIR}; quit;"
+  CMD="${CMD} ${LOCAL_DIR} ${REMOTE_DIR}; quit;"
 else
   CMD="${CMD} ${REMOTE_DIR} ${LOCAL_DIR}; quit;"
 fi
