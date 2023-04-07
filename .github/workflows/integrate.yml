@@ -48,7 +48,7 @@ jobs:
         id: call
         uses: ./
         with:
-          remote: "sftp://$(whoami)@localhost/$(pwd)/test/remote/"
+          remote: "sftp://$(whoami):dummy@localhost/$(pwd)/test/remote/"
           local_dir: ./test/local/
           timeout: 10
         env:
