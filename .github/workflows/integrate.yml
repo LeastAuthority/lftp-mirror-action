@@ -45,10 +45,10 @@ jobs:
 
           # Create test directories
           mkdir -p ./test/{local,remote}
-          target='local'
+          source='remote'
           for content in bla bli blu; do
-            mkdir -p ./test/${target}/${content}
-            echo "Test content in ${target} ${content}" > ./test/${target}/${content}/${content}.ext
+            mkdir -p ./test/${source}/${content}
+            echo "Test content in ${source} ${content}" > ./test/${source}/${content}/${content}.ext
           done
 
       - name: Call action
@@ -109,10 +109,10 @@ jobs:
 
           # Create test directories
           mkdir -p ./test/{local,remote}
-          target='remote'
+          source='local'
           for content in bla bli blu; do
-            mkdir -p ./test/${target}/${content}
-            echo "Test content in ${target} ${content}" > ./test/${target}/${content}/${content}.ext
+            mkdir -p ./test/${source}/${content}
+            echo "Test content in ${source} ${content}" > ./test/${source}/${content}/${content}.ext
           done
 
       - name: Call action
