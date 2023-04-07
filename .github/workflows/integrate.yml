@@ -55,7 +55,7 @@ jobs:
         uses: ./
         with:
           remote: "sftp://${{ env.TEST_USER }}:dummy@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote"
-          local_dir: ./test/local
+          local_dir: ./test/local/
           connect_program: 'ssh -a -x -o StrictHostKeyChecking=no -i ./test_key'
           reverse: true
           verbose: true
