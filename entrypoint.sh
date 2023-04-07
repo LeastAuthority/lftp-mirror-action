@@ -59,10 +59,9 @@ else
     REMOTE_SCHEME="${BASH_REMATCH[2]}"
     REMOTE_HOST="${BASH_REMATCH[3]}"
     REMOTE_DIR="${BASH_REMATCH[4]}"
-    else
-      echo "FAILURE - Failed to parse src or dst" >> "${TMP_ERR}"
-      echo ":x: Failed to parse src or dst" >> $GITHUB_STEP_SUMMARY
-    fi
+  else
+    echo "FAILURE - Failed to parse src or dst" >> "${TMP_ERR}"
+    echo ":x: Failed to parse src or dst" >> $GITHUB_STEP_SUMMARY
   fi
 fi
 
