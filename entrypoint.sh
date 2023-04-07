@@ -47,21 +47,24 @@ fi
 
 # Detect scheme and remote dir
 if [[ "${INPUT_REMOTE}" =~ ^((.+)://)?([^/]+)(/.+)?$ ]]; then
-  SCHEME="${BASH_REMATCH[2]}"
+  REMOTE_SCHEME="${BASH_REMATCH[2]}"
+  REMOTE_HOST="${BASH_REMATCH[3]}"
   REMOTE_DIR="${BASH_REMATCH[4]}"
 else
-  SCHEME='ftp'
+  REMOTE_SCHEME='ftp'
   REMOTE_DIR='/~/'
 fi
 
 # Prepare commands
 CMD=""
 # Configure connect program if needed
-if [ -n "${INPUT_CONNECT_PROGRAM}" ] && [ "${SCHEME}" = fish -o "${SCHEME}" = sftp ]; then
-  CMD="set ${SCHEME}:connect-program ${INPUT_CONNECT_PROGRAM};"
+if [ -n "${INPUT_CONNECT_PROGRAM}" ] && [ "${REMOTE_SCHEME}" = fish -o "${REMOTE_SCHEME}" = sftp ]; then
+  CMD="set ${REMOTE_SCHEME}:connect-program ${INPUT_CONNECT_PROGRAM};"
 fi
-# Open the connection
-CMD="${CMD} open ${INPUT_REMOTE};"
+# Open the connection if needed
+if [ -n "${REMOTE_SCHEME}" ]; then
+  CMD="${CMD} open ${REMOTE_SCHEME}://${REMOTE_HOST};"
+fi
 # Always use mirror command
 CMD="${CMD} mirror"
 # Add mirror options if needed
@@ -78,7 +81,7 @@ if [ -n "${INPUT_MIRROR_OPTIONS}" ]; then
   CMD="${CMD} ${INPUT_MIRROR_OPTIONS}"
 fi
 # Add paths and quit
-CMD="${CMD} ${INPUT_LOCAL_DIR}; quit;"
+CMD="${CMD} ${INPUT_LOCAL_DIR} ${REMOTE_DIR}; quit;"
 
 # Run the command as constructed above
 echo ":rocket: Mirroring by lftp has been started" >> $GITHUB_STEP_SUMMARY
