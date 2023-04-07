@@ -27,16 +27,17 @@ jobs:
       - name: Prepare key pairs
         id: prepare
         run: |
-          # Generate key pair
-          mkdir ~/.ssh && chmod 0700 ~/.ssh
-          ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -P ''
+          ssh-keygen -t ed25519 -f ./test_key -P ''
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "private_key<<$EOF" >> $GITHUB_OUTPUT
+          cat ./test_key >> $GITHUB_OUTPUT
+          echo $EOF >> $GITHUB_OUTPUT
 
-          # Authorizing keys
-          cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
+          # Authorizing pub key
+          mkdir ~/.ssh && chmod 0700 ~/.ssh
+          cat ./test_key.pub >> ~/.ssh/authorized_keys
           chmod 0600 ~/.ssh/authorized_keys
           sudo systemctl status sshd || sudo systemctl start sshd
-          ip addr show
-          ssh-keyscan -t ed25519 localhost,127.0.0.1,172.17.0.1 >> ~/.ssh/known_hosts
 
           # Store some environment
           echo "USER=$(whoami)" >> $GITHUB_ENV
@@ -54,7 +55,7 @@ jobs:
         with:
           remote: "sftp://${{ env.USER }}:dummy@172.17.0.1/${{ env.GITHUB_WORSPACE }}/test/remote/"
           local_dir: ./test/local/
-          connect_program: 'ssh -a -x -o StrictHostKeyChecking=no'
+          connect_program: 'ssh -a -x -o StrictHostKeyChecking=no -i ./test_key'
           reverse: true
           verbose: true
           timeout: 10
