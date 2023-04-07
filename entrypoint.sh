@@ -28,11 +28,11 @@ TMP_ERR="$(mktemp $(basename $0)_err.XXXXXXXXXX)"
 trap "rm -f ${TMP_OUT} ${TMP_ERR}" EXIT
 
 # Test inputs and set some defaults to avoid unbound variable
-test -n "${INPUT_REMOTE}"      # Remote host name or URL (e.g.: sftp://<user>:<pass>@<host><path>)
+test -n "${INPUT_SRC}"      # Source directory or URL (e.g.: sftp://<user>:<pass>@<host><path>)
+test -n "${INPUT_DST}"      # Destination directory or URL (e.g.: sftp://<user>:<pass>@<host><path>)
 : ${INPUT_CONNECT_PROGRAM:=''} # Program to use for connecting (e.g.: ssh i <key> -o StrictHostKeyChecking=no)
-: ${INPUT_VERBOSE:='false'}    # Enable verbose logging
-: ${INPUT_REVERSE:='false'}    # Enable upload instead of download
 : ${INPUT_DELETE:='false'}     # Enable deletion before transfer
+: ${INPUT_VERBOSE:='false'}    # Enable verbose logging
 : ${INPUT_MIRROR_OPTIONS:=''}  # Extra mirror options (e.g.: --exclude "\.git.*")
 : ${INPUT_LOCAL_DIR:='.'}      # Local directory
 : ${INPUT_TIMEOUT:=300}        # Time limit for the completion (seconds)
@@ -45,14 +45,25 @@ if [ ${VERBOSE} -ge 2 ]; then
   LFTP=( ${LFTP[@]} '-d' )
 fi
 
-# Detect scheme and remote dir
-if [[ "${INPUT_REMOTE}" =~ ^((.+)://)?([^/]+)(/.+)?$ ]]; then
+# Detect direction from src and dst, then set remote and local var accordingly
+if [[ "${INPUT_SRC}" =~ ^((.+)://)?([^/]+)(/.+)?$ ]]; then
+  REVERSE=false
+  LOCAL_DIR="${INPUT_DST}"
   REMOTE_SCHEME="${BASH_REMATCH[2]}"
   REMOTE_HOST="${BASH_REMATCH[3]}"
   REMOTE_DIR="${BASH_REMATCH[4]}"
 else
-  REMOTE_SCHEME='ftp'
-  REMOTE_DIR='/~/'
+  REVERSE=true
+  LOCAL_DIR="${INPUT_SRC}"
+  if [[ "${INPUT_DST}" =~ ^((.+)://)?([^/]+)(/.+)?$ ]]; then
+    REMOTE_SCHEME="${BASH_REMATCH[2]}"
+    REMOTE_HOST="${BASH_REMATCH[3]}"
+    REMOTE_DIR="${BASH_REMATCH[4]}"
+    else
+      echo "FAILURE - Failed to parse src or dst" >> "${TMP_ERR}"
+      echo ":x: Failed to parse src or dst" >> $GITHUB_STEP_SUMMARY
+    fi
+  fi
 fi
 
 # Prepare commands
@@ -68,20 +79,20 @@ fi
 # Always use mirror command
 CMD="${CMD} mirror"
 # Add mirror options if needed
-if [ "${INPUT_VERBOSE}" = true ]; then
-  CMD="${CMD} --verbose"
-fi
-if [ "${INPUT_REVERSE}" = true ]; then
+if [ "${REVERSE}" = true ]; then
   CMD="${CMD} --reverse"
 fi
 if [ "${INPUT_DELETE}" = true ]; then
   CMD="${CMD} --delete"
 fi
+if [ "${INPUT_VERBOSE}" = true ]; then
+  CMD="${CMD} --verbose"
+fi
 if [ -n "${INPUT_MIRROR_OPTIONS}" ]; then
   CMD="${CMD} ${INPUT_MIRROR_OPTIONS}"
 fi
 # Add paths and quit
-if [ "${INPUT_REVERSE}" = true ]; then
+if [ "${REVERSE}" = true ]; then
   CMD="${CMD} ${INPUT_LOCAL_DIR} ${REMOTE_DIR}; quit;"
 else
   CMD="${CMD} ${REMOTE_DIR} ${INPUT_LOCAL_DIR}; quit;"

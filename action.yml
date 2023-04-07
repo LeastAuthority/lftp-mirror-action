@@ -1,20 +1,15 @@
 name: 'lftp-mirror'
 description: 'Mirror local and remote files using lftp'
 inputs:
-  remote:
-    description: 'Remote host name or URL (e.g.: sftp://<user>:<pass>@<host><path>)'
+  src:
+    description: 'Source directory or URL (e.g.: sftp://<user>:<pass>@<host><path>)'
+    required: true
+  dst:
+    description: 'Destination directory or URL (e.g.: sftp://<user>:<pass>@<host><path>)'
     required: true
   connect_program:
     description: 'Program to use for connecting (e.g.: ssh i <key> -o StrictHostKeyChecking=no)'
     required: false
-  local_dir:
-    description: 'Local directory'
-    required: false
-    default: '.'
-  reverse:
-    description: 'Enable upload instead of download'
-    required: false
-    default: false
   delete:
     description: 'Enable deletion before transfer'
     required: false
