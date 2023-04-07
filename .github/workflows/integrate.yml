@@ -38,6 +38,9 @@ jobs:
           ip addr show
           ssh-keyscan -t ed25519 localhost,127.0.0.1,172.17.0.1 >> ~/.ssh/known_hosts
 
+          # Store some environment
+          echo "USER=$(whoami)" >> $GITHUB_ENV
+
           # Create test directories
           mkdir -p ./test/{local,remote}
           for content in bla bli blu; do
