@@ -1,0 +1,74 @@
+name: Integration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/integrate.yml'
+      - 'action.yml'
+      - 'Dockerfile'
+      - 'entrypoint.sh'
+  pull_request:
+    branches:    
+      - main
+    paths:
+      - '.github/workflows/integrate.yml'
+      - 'action.yml'
+      - 'Dockerfile'
+      - 'entrypoint.sh'
+jobs:
+  test_defaults:
+    name: Test defaults
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare key pairs
+        id: prepare
+        run: |
+          # Generate key pair
+          mkdir ~/.ssh && chmod 0700 ~/.ssh
+          ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -P ''
+          echo "private_key<<EOF" >> $GITHUB_OUTPUT
+          cat ./test_key >> $GITHUB_OUTPUT
+          echo EOF >> $GITHUB_OUTPUT
+
+          # Authorizing pub key
+          cat ./test_key.pub >> ~/.ssh/authorized_keys
+          chmod 0600 ~/.ssh/authorized_keys
+          sudo systemctl status sshd || sudo systemctl start sshd
+
+          # Create test directories
+          mkdir -p ./test/{local,remote}
+          for content in bla bli blu; do
+            mkdir -p ./test/local/${content}
+            echo "Test content in ${content}" > ./test/local/${content}/${content}.ext
+          done
+
+      - name: Call action
+        id: call
+        uses: ./
+        with:
+          private_key: "${{ steps.prepare.outputs.private_key }}"
+          remote: "sftp://$(whoami)@localhost/$(pwd)/test/remote/"
+          local_dir: ./test/local/
+        continue-on-error: true
+
+      - name: Verify
+        id: verify
+        run: |
+          diff --recursive ./test/local ./test/remote
+        continue-on-error: true
+
+      - name: Proper exit
+        run: |
+          if [ ${{ steps.prepare.outcome }} != 'success'\
+                -o ${{ steps.call.outcome }} != 'success' \
+                -o ${{ steps.verify.outcome }} != 'success' ]
+          then
+            echo ":x: Test failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo ":heavy_check_mark: Test succeeded" >> $GITHUB_STEP_SUMMARY
+          fi
