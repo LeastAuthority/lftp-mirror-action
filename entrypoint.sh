@@ -87,7 +87,7 @@ if [ -n "${INPUT_CONNECT_PROGRAM}" ] && [ "${REMOTE_SCHEME}" = fish -o "${REMOTE
 fi
 # Open the connection if needed
 if [ -n "${REMOTE_SCHEME}" ]; then
-  CMD="${CMD} open ${REMOTE_SCHEME}://${REMOTE_HOST};"
+  CMD="${CMD} open ${REMOTE_SCHEME}://${REMOTE_USER}:${REMOTE_PASS}@${REMOTE_HOST};"
 fi
 # Always use mirror command
 CMD="${CMD} mirror"
