@@ -46,7 +46,7 @@ if [ ${VERBOSE} -ge 2 ]; then
 fi
 
 # Detect direction from src and dst, then set remote and local var accordingly
-if [[ "${INPUT_SRC}" =~ ^((.+)://)?([^/]+)(/.+)?$ ]]; then
+if [[ "${INPUT_SRC}" =~ ^((.+)://)([^/]+)(/.+)?$ ]]; then
   REVERSE=false
   LOCAL_DIR="${INPUT_DST}"
   REMOTE_SCHEME="${BASH_REMATCH[2]}"
@@ -55,7 +55,7 @@ if [[ "${INPUT_SRC}" =~ ^((.+)://)?([^/]+)(/.+)?$ ]]; then
 else
   REVERSE=true
   LOCAL_DIR="${INPUT_SRC}"
-  if [[ "${INPUT_DST}" =~ ^((.+)://)?([^/]+)(/.+)?$ ]]; then
+  if [[ "${INPUT_DST}" =~ ^((.+)://)([^/]+)(/.+)?$ ]]; then
     REMOTE_SCHEME="${BASH_REMATCH[2]}"
     REMOTE_HOST="${BASH_REMATCH[3]}"
     REMOTE_DIR="${BASH_REMATCH[4]}"
