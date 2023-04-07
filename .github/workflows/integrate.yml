@@ -55,7 +55,7 @@ jobs:
         id: call
         uses: ./
         with:
-          src: "sftp://${{ env.TEST_USER }}:dummy@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote/"
+          src: "sftp://${{ env.TEST_USER }}@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote/"
           dst: ./test/local/
           connect_program: 'ssh -a -x -o StrictHostKeyChecking=no -i ./test_key'
           verbose: true
@@ -120,7 +120,7 @@ jobs:
         uses: ./
         with:
           src: ./test/local/
-          dst: "sftp://${{ env.TEST_USER }}:dummy@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote/"
+          dst: "sftp://${{ env.TEST_USER }}@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote/"
           connect_program: 'ssh -a -x -o StrictHostKeyChecking=no -i ./test_key'
           verbose: true
           timeout: 10
@@ -185,7 +185,7 @@ jobs:
         id: call
         uses: ./
         with:
-          src: "sftp://${{ env.TEST_USER }}:dummy@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote/"
+          src: "sftp://${{ env.TEST_USER }}@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote/"
           dst: ./test/local/
           connect_program: 'ssh -a -x -o StrictHostKeyChecking=no -i ./test_key'
           delete: true
