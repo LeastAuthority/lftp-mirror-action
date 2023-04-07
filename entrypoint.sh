@@ -73,7 +73,6 @@ if [ "${INPUT_VERBOSE}" = true ]; then
 fi
 if [ "${INPUT_REVERSE}" = true ]; then
   CMD="${CMD} --reverse"
-  ${INPUT_LOCAL_DIR} ${REMOTE_DIR}
 fi
 if [ "${INPUT_DELETE}" = true ]; then
   CMD="${CMD} --delete"
