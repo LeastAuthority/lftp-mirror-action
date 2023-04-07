@@ -73,6 +73,7 @@ if [ "${INPUT_VERBOSE}" = true ]; then
 fi
 if [ "${INPUT_REVERSE}" = true ]; then
   CMD="${CMD} --reverse"
+  ${INPUT_LOCAL_DIR} ${REMOTE_DIR}
 fi
 if [ "${INPUT_DELETE}" = true ]; then
   CMD="${CMD} --delete"
@@ -81,8 +82,11 @@ if [ -n "${INPUT_MIRROR_OPTIONS}" ]; then
   CMD="${CMD} ${INPUT_MIRROR_OPTIONS}"
 fi
 # Add paths and quit
-CMD="${CMD} ${INPUT_LOCAL_DIR} ${REMOTE_DIR}; quit;"
-
+if [ "${INPUT_REVERSE}" = true ]; then
+  CMD="${CMD} ${INPUT_LOCAL_DIR} ${REMOTE_DIR}; quit;"
+else
+  CMD="${CMD} ${REMOTE_DIR} ${INPUT_LOCAL_DIR}; quit;"
+fi
 # Run the command as constructed above
 echo ":rocket: Mirroring by lftp has been started" >> $GITHUB_STEP_SUMMARY
 timeout -s TERM -k 5s "${INPUT_TIMEOUT}s" \
