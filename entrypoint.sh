@@ -64,6 +64,21 @@ else
   fi
 fi
 
+# Detect remote user and password
+if [[ "${REMOTE_HOST}" =~ ^([^:@]+)(:([^@]+))?@(.+)$ ]]; then
+  REMOTE_USER="${BASH_REMATCH[1]}"
+  REMOTE_PASS="${BASH_REMATCH[3]}"
+  REMOTE_HOST="${BASH_REMATCH[4]}"
+else
+  echo "FAILURE - Failed to parse remote user or password" >> "${TMP_ERR}"
+  echo ":x: Failed to parse remote user or password" >> $GITHUB_STEP_SUMMARY
+fi
+
+# Use dummy password if empty
+if [ -z "${REMOTE_PASS}" ]; then
+  REMOTE_PASS='lftp'
+fi
+
 # Prepare commands
 CMD=""
 # Configure connect program if needed
