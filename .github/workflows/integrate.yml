@@ -39,10 +39,6 @@ jobs:
           chmod 0600 ~/.ssh/authorized_keys
           sudo systemctl status sshd || sudo systemctl start sshd
 
-          # Store some environment variables
-          echo "TEST_USER=$(whoami)" >> $GITHUB_ENV
-          echo "TEST_WORSPACE=$(pwd)" >> $GITHUB_ENV
-
           # Create test directories
           mkdir -p ./test/{local,remote}
           for content in bla bli blu; do
@@ -50,12 +46,16 @@ jobs:
             echo "Test content in ${content}" > ./test/local/${content}/${content}.ext
           done
 
+          # Store some environment variables for the test
+          echo "TEST_USER=$(whoami)" >> $GITHUB_ENV
+          echo "TEST_WORSPACE=$(pwd)" >> $GITHUB_ENV
+
       - name: Call action
         id: call
         uses: ./
         with:
-          remote: "sftp://${{ env.TEST_USER }}:dummy@172.17.0.1/${{ env.TEST_WORSPACE }}/test/remote/"
-          local_dir: ./test/local/
+          remote: "sftp://${{ env.TEST_USER }}:dummy@172.17.0.1${{ env.TEST_WORSPACE }}/test/remote"
+          local_dir: ./test/local
           connect_program: 'ssh -a -x -o StrictHostKeyChecking=no -i ./test_key'
           reverse: true
           verbose: true
