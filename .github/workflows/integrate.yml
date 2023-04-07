@@ -50,6 +50,8 @@ jobs:
         with:
           remote: "sftp://$(whoami):dummy@localhost/$(pwd)/test/remote/"
           local_dir: ./test/local/
+          reverse: true
+          verbose: true
           timeout: 10
         env:
           VERBOSE: 2
