@@ -49,8 +49,9 @@ jobs:
         id: call
         uses: ./
         with:
-          remote: "sftp://$(whoami):dummy@172.17.0.1/$(pwd)/test/remote/"
+          remote: "sftp://${{ env.USER }}:dummy@172.17.0.1/${{ env.GITHUB_WORSPACE }}/test/remote/"
           local_dir: ./test/local/
+          connect_program: 'ssh -a -x -o StrictHostKeyChecking=no'
           reverse: true
           verbose: true
           timeout: 10
